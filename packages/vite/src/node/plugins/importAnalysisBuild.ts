@@ -9,6 +9,7 @@ import {
   bareImportRE,
   cleanUrl,
   combineSourcemaps,
+  isCssExt,
   isDataUrl,
   isExternalUrl,
   moduleListContains,
@@ -79,7 +80,7 @@ function preload(
       dep = assetsURL(dep, importerUrl)
       if (dep in seen) return
       seen[dep] = true
-      const isCss = dep.endsWith('.css')
+      const isCss = isCssExt(dep)
       const cssSelector = isCss ? '[rel="stylesheet"]' : ''
       const isBaseRelative = !!importerUrl
 
@@ -527,7 +528,7 @@ export function buildImportAnalysisPlugin(config: ResolvedConfig): Plugin {
                     const cssDeps: string[] = []
                     const otherDeps: string[] = []
                     for (const dep of depsArray) {
-                      ;(dep.endsWith('.css') ? cssDeps : otherDeps).push(dep)
+                      ;(isCssExt(dep) ? cssDeps : otherDeps).push(dep)
                     }
                     resolvedDeps = [
                       ...resolveDependencies(normalizedFile, otherDeps, {
